@@ -1,0 +1,9 @@
+{"properties": [{
+  "name": "com.c4-soft.security.oauth2.client-id",
+  "type": "java.lang.String",
+  "description": "OAuth2 client ID as declared on Authorization-server"
+},{
+  "name": "com.c4-soft.security.cors-path",
+  "type": "java.lang.String",
+  "description": "ANT style path for authorized CORS"
+}]}
