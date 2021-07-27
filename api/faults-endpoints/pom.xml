@@ -105,6 +105,16 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<classifier>${repackage.classifier}</classifier>
+					<image>
+						<builder>paketobuildpacks/builder:tiny</builder>
+						<env>
+							<BP_NATIVE_IMAGE>true</BP_NATIVE_IMAGE>
+						</env>
+						<pullPolicy>IF_NOT_PRESENT</pullPolicy>
+					</image>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.springframework.experimental</groupId>
@@ -115,27 +125,7 @@
 
 	<profiles>
 		<profile>
-			<id>buildpacks</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.springframework.boot</groupId>
-						<artifactId>spring-boot-maven-plugin</artifactId>
-						<configuration>
-							<classifier>${repackage.classifier}</classifier>
-							<image>
-								<builder>paketobuildpacks/builder:tiny</builder>
-								<env>
-									<BP_NATIVE_IMAGE>true</BP_NATIVE_IMAGE>
-								</env>
-							</image>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>native</id>
+			<id>native-buildpacks</id>
 			<build>
 				<plugins>
 					<plugin>
@@ -147,17 +137,26 @@
 								<goals>
 									<goal>build-image</goal>
 								</goals>
-								<configuration>
-									<image>
-										<builder>paketobuildpacks/builder:tiny</builder>
-										<env>
-											<BP_NATIVE_IMAGE>true</BP_NATIVE_IMAGE>
-										</env>
-										<pullPolicy>IF_NOT_PRESENT</pullPolicy>
-									</image>
-								</configuration>
 							</execution>
 						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>native-buildtools</id>
+			<properties>
+				<!-- Avoid a clash between Spring Boot repackaging and native-maven-plugin -->
+				<repackage.classifier>exec</repackage.classifier>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.graalvm.buildtools</groupId>
+						<artifactId>native-maven-plugin</artifactId>
+						<configuration>
+							<!-- ... -->
+						</configuration>
 					</plugin>
 				</plugins>
 			</build>
